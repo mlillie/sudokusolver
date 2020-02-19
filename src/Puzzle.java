@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -28,7 +27,7 @@ public class Puzzle extends JPanel {
     Puzzle() {
         generateRandomBoard();
         try {
-            this.puzzleImage = ImageIO.read(new File("sudoku-blankgrid.png"));
+            this.puzzleImage = ImageIO.read(getClass().getResource("/images/sudoku-blankgrid.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
