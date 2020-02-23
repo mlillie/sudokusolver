@@ -12,7 +12,7 @@ import java.util.concurrent.*;
  *
  * @author Matthew Lillie
  */
-public class MultithreadedBacktrackingSolver implements Solver {
+public class ParallelBacktrackingSolver implements Solver {
 
     /**
      * Number of threads to use for sorting.
@@ -29,7 +29,7 @@ public class MultithreadedBacktrackingSolver implements Solver {
      *
      * @param numberThreads The number of thread pools to have available.
      */
-    public MultithreadedBacktrackingSolver(int numberThreads) {
+    public ParallelBacktrackingSolver(int numberThreads) {
         this.numberThreads = numberThreads;
         this.threadPool = Executors.newFixedThreadPool(numberThreads);
     }
@@ -37,7 +37,7 @@ public class MultithreadedBacktrackingSolver implements Solver {
     /**
      * Construct a new solver using however many processors are available.
      */
-    public MultithreadedBacktrackingSolver() {
+    public ParallelBacktrackingSolver() {
         this.numberThreads = Runtime.getRuntime().availableProcessors();
         this.threadPool = Executors.newFixedThreadPool(numberThreads);
     }

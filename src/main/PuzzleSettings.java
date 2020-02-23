@@ -1,6 +1,6 @@
 package main;
 
-import main.solvers.MultithreadedBacktrackingSolver;
+import main.solvers.ParallelBacktrackingSolver;
 import main.solvers.SequentialBacktrackingSolver;
 import main.solvers.Solver;
 
@@ -30,7 +30,7 @@ public class PuzzleSettings extends JPanel {
             if (solvingThread == null) {
                 solvingThread = new Thread(() -> {
                     final PuzzleNode[][] currentBoard = puzzle.getCurrentBoard();
-                    Solver solver = new MultithreadedBacktrackingSolver();
+                    Solver solver = new ParallelBacktrackingSolver();
 
                     long start = System.currentTimeMillis();
                     solver.solve(puzzle);
