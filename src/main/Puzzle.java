@@ -1,3 +1,5 @@
+package main;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -5,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Represents a Sudoku puzzle that is being drawn onto a JPanel, includes a method to be able to generate a random puzzle as well as solving the
@@ -15,14 +18,14 @@ import java.io.IOException;
 public class Puzzle extends JPanel {
 
     // Constants and variables
-    private static final int NUMBER_OF_SQUARES = 9;
-    private static final int SQUARE_WIDTH = 3;
-    private static final int SQUARE_HEIGHT = 3;
+    public static final int NUMBER_OF_SQUARES = 9;
+    public static final int SQUARE_WIDTH = 3;
+    public static final int SQUARE_HEIGHT = 3;
     private BufferedImage puzzleImage;
     private PuzzleNode[][] currentBoard;
 
     /**
-     * Construct a new Puzzle JPanel
+     * Construct a new main.Puzzle JPanel
      */
     Puzzle() {
         generateRandomBoard();
@@ -97,7 +100,7 @@ public class Puzzle extends JPanel {
      * @param number   The number to be placed.
      * @return True if no row, column or same square holds the same number.
      */
-    private boolean checkValid(int currentX, int currentY, int number) {
+    public synchronized boolean checkValid(int currentX, int currentY, int number) {
         // If it's being reset, it's always valid!
         if (number == 0) {
             return true;
@@ -132,6 +135,7 @@ public class Puzzle extends JPanel {
 
         return true;
     }
+
 
     /**
      * This shows an input dialog to the selected box in order to change the value for that node.
@@ -185,55 +189,11 @@ public class Puzzle extends JPanel {
     }
 
     /**
-     * Attempts to solve the puzzle using backtracking recursion.
-     *
-     * @return True if the puzzle was solved successfully otherwise false.
-     */
-    public boolean solve() {
-        // If every square is filled, then we finished!
-        if (finished()) {
-            return true;
-        }
-
-        for (int x = 0; x < NUMBER_OF_SQUARES; x++) {
-            for (int y = 0; y < NUMBER_OF_SQUARES; y++) {
-                if (currentBoard[x][y].getValue() == 0) {
-                    for (int n = 1; n <= NUMBER_OF_SQUARES; n++) {
-                        if (checkValid(x, y, n)) {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException ignored) {
-                            }
-                            currentBoard[x][y].setValue(n);
-                            currentBoard[x][y].setColor(Color.RED);
-                            SwingUtilities.invokeLater(this::repaint);
-                            if (solve()) {
-                                currentBoard[x][y].setColor(Color.BLUE);
-                                try {
-                                    Thread.sleep(50);
-                                } catch (InterruptedException ignored) {
-                                }
-                                SwingUtilities.invokeLater(this::repaint);
-                                return true;
-                            } else {
-                                currentBoard[x][y].setValue(0);
-                                currentBoard[x][y].setColor(Color.BLACK);
-                            }
-                        }
-                    }
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Determines if this puzzle is finished by checking that no numbers are zero.
      *
      * @return True if it is filled.
      */
-    public boolean finished() {
+    public synchronized boolean finished() {
         for (int x = 0; x < NUMBER_OF_SQUARES; x++) {
             for (int y = 0; y < NUMBER_OF_SQUARES; y++) {
                 if (currentBoard[x][y].getValue() == 0) {
@@ -277,4 +237,24 @@ public class Puzzle extends JPanel {
         }
     }
 
+    public synchronized PuzzleNode[][] getCurrentBoard() {
+        return currentBoard;
+    }
+
+    public synchronized void setCurrentBoard(PuzzleNode[][] currentBoard) {
+        this.currentBoard = currentBoard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Puzzle puzzle = (Puzzle) o;
+        return Arrays.equals(currentBoard, puzzle.currentBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(currentBoard);
+    }
 }

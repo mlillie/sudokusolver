@@ -1,7 +1,13 @@
+package main;
+
+import main.solvers.MultithreadedBacktrackingSolver;
+import main.solvers.SequentialBacktrackingSolver;
+import main.solvers.Solver;
+
 import javax.swing.*;
 
 /**
- * Panel that represents the settings for the Sudoku Puzzle. Includes solving the puzzle and re-randomizing it.
+ * Panel that represents the settings for the Sudoku main.Puzzle. Includes solving the puzzle and re-randomizing it.
  *
  * @author Matthew Lillie
  */
@@ -23,16 +29,25 @@ public class PuzzleSettings extends JPanel {
         solveButton.addActionListener((actionEvent) -> {
             if (solvingThread == null) {
                 solvingThread = new Thread(() -> {
-                    if (puzzle.solve()) {
-                        System.out.println("Finished, null thread");
-                    } else {
-                        System.out.println("No solution found.");
-                        JOptionPane.showMessageDialog(puzzle, "No solution found!", "Solution", JOptionPane.ERROR_MESSAGE);
-                    }
+                    final PuzzleNode[][] currentBoard = puzzle.getCurrentBoard();
+                    Solver solver = new MultithreadedBacktrackingSolver();
+
+                    long start = System.currentTimeMillis();
+                    solver.solve(puzzle);
+                    System.out.println("MT Found in " + (System.currentTimeMillis() - start) + "ms");
+
+                    puzzle.setCurrentBoard(currentBoard);
+                    puzzle.repaint();
+
+                    solver = new SequentialBacktrackingSolver();
+                    start = System.currentTimeMillis();
+                    solver.solve(puzzle);
+                    System.out.println("S Found in " + (System.currentTimeMillis() - start) + "ms");
                     solvingThread = null;
                 });
                 solvingThread.start();
             }
+
         });
 
         newButton.addActionListener((actionEvent -> {
