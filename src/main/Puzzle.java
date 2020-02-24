@@ -84,56 +84,12 @@ public class Puzzle extends JPanel {
                 }
                 // Make sure the number validated is valid.
                 int number = (int) (Math.random() * NUMBER_OF_SQUARES + 1);
-                while (!checkValid(x, y, number)) {
+                while (!PuzzleHelpers.checkValid(currentBoard, x, y, number)) {
                     number = (int) (Math.random() * NUMBER_OF_SQUARES + 1);
                 }
                 currentBoard[x][y].setValue(number);
             }
         }
-    }
-
-    /**
-     * Checks if a value at a given spot is valid.
-     *
-     * @param currentX The current X position of the value.
-     * @param currentY The current Y position of the value.
-     * @param number   The number to be placed.
-     * @return True if no row, column or same square holds the same number.
-     */
-    public synchronized boolean checkValid(int currentX, int currentY, int number) {
-        // If it's being reset, it's always valid!
-        if (number == 0) {
-            return true;
-        }
-        // Check row
-        for (int x = 0; x < NUMBER_OF_SQUARES; x++) {
-            if (currentBoard[x][currentY].getValue() == number) {
-                return false;
-            }
-        }
-
-        // Check column
-        for (int y = 0; y < NUMBER_OF_SQUARES; y++) {
-            if (currentBoard[currentX][y].getValue() == number) {
-                return false;
-            }
-        }
-
-        // Check current square
-        int squareX = (int) (Math.floor(currentX / SQUARE_WIDTH) * SQUARE_WIDTH);
-        int squareY = (int) (Math.floor(currentY / SQUARE_HEIGHT) * SQUARE_HEIGHT);
-
-        for (int i = 0; i < SQUARE_WIDTH; i++) {
-            for (int j = 0; j < SQUARE_HEIGHT; j++) {
-                if (currentX == squareX + i && currentY == squareY) continue;
-
-                if (currentBoard[squareX + i][squareY + j].getValue() == number) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
 
@@ -158,7 +114,7 @@ public class Puzzle extends JPanel {
             return;
         }
         int number = attemptParse(s);
-        while (number < 0 || number > 9 || !checkValid(x, y, number)) {
+        while (number < 0 || number > 9 || !PuzzleHelpers.checkValid(currentBoard, x, y, number)) {
             s = JOptionPane.showInputDialog(null,
                     "Try again... number (0-9):", "Changing number for index: (" + x + "," + y + ")", JOptionPane.QUESTION_MESSAGE);
             if (s == null) {
@@ -186,23 +142,6 @@ public class Puzzle extends JPanel {
         } catch (NumberFormatException e) {
             return -1;
         }
-    }
-
-    /**
-     * Determines if this puzzle is finished by checking that no numbers are zero.
-     *
-     * @return True if it is filled.
-     */
-    public synchronized boolean finished() {
-        for (int x = 0; x < NUMBER_OF_SQUARES; x++) {
-            for (int y = 0; y < NUMBER_OF_SQUARES; y++) {
-                if (currentBoard[x][y].getValue() == 0) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     @Override
@@ -237,11 +176,12 @@ public class Puzzle extends JPanel {
         }
     }
 
-    public synchronized PuzzleNode[][] getCurrentBoard() {
+
+    public PuzzleNode[][] getCurrentBoard() {
         return currentBoard;
     }
 
-    public synchronized void setCurrentBoard(PuzzleNode[][] currentBoard) {
+    public void setCurrentBoard(PuzzleNode[][] currentBoard) {
         this.currentBoard = currentBoard;
     }
 
@@ -257,4 +197,5 @@ public class Puzzle extends JPanel {
     public int hashCode() {
         return Arrays.hashCode(currentBoard);
     }
+
 }

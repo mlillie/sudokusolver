@@ -34,6 +34,17 @@ public class PuzzleNode {
     }
 
     @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            PuzzleNode puzzleNode = new PuzzleNode(value);
+            puzzleNode.color = color;
+            return puzzleNode;
+        }
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

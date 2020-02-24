@@ -1,6 +1,7 @@
 package main.solvers;
 
 import main.Puzzle;
+import main.PuzzleHelpers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +26,7 @@ public class SequentialBacktrackingSolver implements Solver {
 
     private boolean backtracking(Puzzle puzzle) {
         // If every square is filled, then we finished!
-        if (puzzle.finished()) {
+        if (PuzzleHelpers.isFinished(puzzle.getCurrentBoard())) {
             return true;
         }
 
@@ -33,7 +34,7 @@ public class SequentialBacktrackingSolver implements Solver {
             for (int y = 0; y < Puzzle.NUMBER_OF_SQUARES; y++) {
                 if (puzzle.getCurrentBoard()[x][y].getValue() == 0) {
                     for (int n = 1; n <= Puzzle.NUMBER_OF_SQUARES; n++) {
-                        if (puzzle.checkValid(x, y, n)) {
+                        if (PuzzleHelpers.checkValid(puzzle.getCurrentBoard(), x, y, n)) {
                             puzzle.getCurrentBoard()[x][y].setValue(n);
                             puzzle.getCurrentBoard()[x][y].setColor(Color.RED);
                             SwingUtilities.invokeLater(puzzle::repaint);

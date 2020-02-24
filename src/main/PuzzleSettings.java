@@ -1,5 +1,6 @@
 package main;
 
+import main.solvers.ForkPoolAllSolver;
 import main.solvers.ParallelBacktrackingSolver;
 import main.solvers.SequentialBacktrackingSolver;
 import main.solvers.Solver;
@@ -43,6 +44,14 @@ public class PuzzleSettings extends JPanel {
                     start = System.currentTimeMillis();
                     solver.solve(puzzle);
                     System.out.println("S Found in " + (System.currentTimeMillis() - start) + "ms");
+
+                    puzzle.setCurrentBoard(currentBoard);
+                    puzzle.repaint();
+
+                    solver = new ForkPoolAllSolver();
+                    start = System.currentTimeMillis();
+                    solver.solve(puzzle);
+                    System.out.println("F Found in " + (System.currentTimeMillis() - start) + "ms");
                     solvingThread = null;
                 });
                 solvingThread.start();
@@ -51,7 +60,7 @@ public class PuzzleSettings extends JPanel {
         });
 
         newButton.addActionListener((actionEvent -> {
-            if (puzzle.finished() || solvingThread == null) {
+            if (PuzzleHelpers.isFinished(puzzle.getCurrentBoard()) || solvingThread == null) {
                 puzzle.generateRandomBoard();
                 puzzle.repaint();
             }
